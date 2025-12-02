@@ -1,3 +1,7 @@
+# AoC data
+in.txt
+ex.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
