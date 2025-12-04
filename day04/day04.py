@@ -8,39 +8,36 @@ DIRS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 def main() -> None:
     fname = sys.argv[1]
 
-    rolls = set[Point]()
+    rolls = dict[Point, int]()
 
     with open(fname) as fh:
         for y, line in enumerate(fh):
             line = line.rstrip()
             for x, c in enumerate(line):
                 if c == "@":
-                    rolls.add((x, y))
+                    rolls[(x, y)] = 0
 
-    ans1 = 0
-    for x, y in rolls:
+    accessible_points = set[Point]()
+    for point in rolls:
+        x, y = point
         neighbors = [(x + dx, y + dy) for dx, dy in DIRS if (x + dx, y + dy) in rolls]
+        rolls[point] = len(neighbors)
         if len(neighbors) < 4:
-            ans1 += 1
+            accessible_points.add(point)
+    ans1 = len(accessible_points)
     print(f"ans1 = {ans1}")
 
     ans2 = 0
-    affected = rolls.copy()
-    next_affected = set[Point]()
-    while affected:
-        while affected:
-            p = affected.pop()
-            if p not in rolls:
-                continue
-            x, y = p
-            neighbors = [
-                (x + dx, y + dy) for dx, dy in DIRS if (x + dx, y + dy) in rolls
-            ]
-            if len(neighbors) < 4:
-                ans2 += 1
-                next_affected.update(neighbors)
-                rolls.remove(p)
-        affected, next_affected = next_affected, affected
+    while accessible_points:
+        point = accessible_points.pop()
+        x, y = point
+        ans2 += 1
+        del rolls[point]
+        neighbors = [(x + dx, y + dy) for dx, dy in DIRS if (x + dx, y + dy) in rolls]
+        for neighbor in neighbors:
+            rolls[neighbor] -= 1
+            if rolls[neighbor] < 4:
+                accessible_points.add(neighbor)
     print(f"ans2 = {ans2}")
 
 
