@@ -82,6 +82,13 @@ def main() -> None:
     tiles, regions = parse_input()
     ans1 = 0
     for width, height, cnts, total_weight in regions:
+        if width * height < total_weight:
+            continue
+        # trivial optimisation, which does not hold in general
+        if 9 * (width // 3) * (height // 3) >= total_weight:
+            ans1 += 1
+            continue
+
         queue = collections.deque[State]()
         visited = set[State]()
 
